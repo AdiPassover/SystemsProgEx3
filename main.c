@@ -23,50 +23,49 @@ int main() {
 
     int action = -1;
     scanf("%d",&action);
-    StrList* list;
+    StrList *list = NULL;
 
     while (action != 0) {
-        switch (action) {
-            case 1:
-                list = StrList_alloc();
-                break;
-            case 2:
-                int ind = -1;
-
-                break;
-            case 3:
-
-                break;
-            case 4:
-
-                break;
-            case 5:
-
-                break;
-            case 6:
-
-                break;
-            case 7:
-
-                break;
-            case 8:
-
-                break;
-            case 9:
-
-                break;
-            case 10:
-
-                break;
-            case 11:
-
-                break;
-            case 12:
-
-                break;
-            case 13:
-
-                break;
+        if (action == 1) {
+            while (StrList_size(list)) {
+                StrList_removeAt(list,0);
+            }
+            // input
+        } else if (action == 2) {
+            int index = -1;
+            scanf("%d",&index);
+            // input data
+            //StrList_insertAt(list,data,index);
+        } else if (action == 3) {
+            StrList_print(list);
+        } else if (action == 4) {
+            printf("%zu", StrList_size(list));
+        } else if (action == 5) {
+            int index = -1;
+            scanf("%d",&index);
+            StrList_printAt(list,index);
+        } else if (action == 6) {
+            printf("%d", StrList_printLen(list));
+        } else if (action == 7) {
+            // input data
+            // printf("%d", StrList_count(list,data));
+        } else if (action == 8) {
+            // input data
+            // StrList_remove(list,data);
+        } else if (action == 9) {
+            int index = -1;
+            scanf("%d",&index);
+            StrList_removeAt(list,index);
+        } else if (action == 10) {
+            StrList_reverse(list);
+        } else if (action == 11) {
+            while (StrList_size(list)) {
+                StrList_removeAt(list,0);
+            }
+        } else if (action == 12) {
+            StrList_sort(list);
+        } else if (action == 13) {
+            printf("%d", StrList_isSorted(list)); // TODO what to print
         }
         scanf("%d",&action);
     }
