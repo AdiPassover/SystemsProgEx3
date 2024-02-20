@@ -90,7 +90,13 @@ size_t StrList_size(const StrList *StrList) {
 void StrList_insertLast(StrList *StrList,
                         const char *data) {
     Node *newNode = Node_alloc(data, NULL);
+    if (newNode == NULL) { printf("Node alloc failed"); }
     Node *p = StrList->_head;
+    if (p == NULL) {
+        StrList->_head = newNode;
+        StrList->_size++;
+        return;
+    }
     while (p->_next) {
         p = p->_next;
     }
@@ -131,6 +137,7 @@ char *StrList_firstData(const StrList *StrList) {
  * Prints the StrList to the standard output.
  */
 void StrList_print(const StrList *StrList) {
+    if (StrList->_head == NULL) { return; }
     Node *p = StrList->_head;
     printf("%s", p->_data);    //should check how to print
     p = p->_next;
@@ -138,6 +145,7 @@ void StrList_print(const StrList *StrList) {
         printf(" %s", p->_data);
         p = p->_next;
     }
+    printf("\n");
 }
 
 /*
@@ -149,7 +157,7 @@ void StrList_printAt(const StrList *Strlist, int index) {
     for (int i = 0; i < index; i++) {
         p = p->_next;
     }
-    printf("%s", p->_data);
+    printf("%s\n", p->_data);
 }
 
 /*
@@ -160,6 +168,8 @@ int StrList_printLen(const StrList *Strlist) {
     Node *p = Strlist->_head;
     while (p) {
         len += strlen(p->_data);
+        //printf("len: %lu\n",strlen(p->_data));
+        //for (int i = 0; i < strlen(p->_data); i++) { printf("%d\n",p->_data[i]);}
         p = p->_next;
     }
     return len;
@@ -181,7 +191,7 @@ int StrList_count(StrList *StrList, const char *data) {
 }
 
 /*
-	Given a string and a list, remove all the appearences of this string in the list.
+	Given a string and a list, remove all the appearances of this string in the list.
 */
 void StrList_remove(StrList *StrList, const char *data) {
     Node *newHead;
@@ -310,10 +320,12 @@ void StrList_sort(StrList *StrList) {
  */
 int StrList_isSorted(StrList *StrList) {
     Node *p = StrList->_head;
+    if (p == NULL) { return TRUE; } // TODO
     while (p->_next) {
         if (strcmp(p->_data, p->_next->_data) > 0) {
             return FALSE;
         }
+        p = p->_next;
     }
     return TRUE;
 }

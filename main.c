@@ -1,75 +1,107 @@
 #include <stdio.h>
+#include <string.h>
 #include "strList.h"
 
-char* inputString(FILE* fp, size_t size){
-//The size is extended by the input with the value of the provisional
-    char *str;
-    int ch;
-    size_t len = 0;
-    str = realloc(NULL, sizeof(char)*size);//size is start size
-    if(!str)return str;
-    while(EOF!=(ch=fgetc(fp)) && ch != '\n' && ch != ' '){
-        str[len++]=ch;
-        if(len==size){
-            str = realloc(str, sizeof(*str)*(size+=16));
-            if(!str)return str;
-        }
-    }
-    str[len++]='\0';
-    return realloc(str, sizeof(*str)*len);
-}
+void splitWords(char *str, StrList *list);
+void cleanInputBuffer();
+char* getWord(char *str);
+
 
 int main() {
 
     int action = -1;
     scanf("%d",&action);
-    StrList *list = NULL;
+    char *line = NULL;
+    size_t len = 0;
+    size_t wordsNumber = 0;
+    size_t lineSize = 0;
+    StrList *list = StrList_alloc();
 
     while (action != 0) {
-        if (action == 1) {
-            while (StrList_size(list)) {
-                StrList_removeAt(list,0);
+        if (action == 1) { // insert multiple words at end
+            scanf("%zd",&wordsNumber);
+            cleanInputBuffer();
+            lineSize = getline(&line, &len, stdin);
+            if (lineSize != -1) {
+                splitWords(line, list);
             }
-            // input
-        } else if (action == 2) {
+        } else if (action == 2) { // insert single word at given index
             int index = -1;
             scanf("%d",&index);
-            // input data
-            //StrList_insertAt(list,data,index);
-        } else if (action == 3) {
+            cleanInputBuffer();
+            lineSize = getline(&line, &len, stdin);
+            if (lineSize != -1) {
+                char* token = getWord(line);
+                StrList_insertAt(list, token, index);
+            }
+        } else if (action == 3) {   //print list
             StrList_print(list);
-        } else if (action == 4) {
-            printf("%zu", StrList_size(list));
-        } else if (action == 5) {
+        } else if (action == 4) { // print size
+            printf("%zu\n", StrList_size(list));
+        } else if (action == 5) { // print word at given index
             int index = -1;
             scanf("%d",&index);
             StrList_printAt(list,index);
-        } else if (action == 6) {
-            printf("%d", StrList_printLen(list));
-        } else if (action == 7) {
-            // input data
-            // printf("%d", StrList_count(list,data));
-        } else if (action == 8) {
-            // input data
-            // StrList_remove(list,data);
-        } else if (action == 9) {
+        } else if (action == 6) { // print total character count
+            printf("%d\n", StrList_printLen(list));
+        } else if (action == 7) {  //print number of appearances of a word in the list
+            cleanInputBuffer();
+            lineSize = getline(&line, &len, stdin);
+            if (lineSize != -1) {
+                char* token = getWord(line);
+                printf("%d\n", StrList_count(list,token));
+            }
+        } else if (action == 8) { // remove all appearances of given word in list
+            cleanInputBuffer();
+            lineSize = getline(&line, &len, stdin);
+            if (lineSize != -1) {
+                char* token = getWord(line);
+                StrList_remove(list,token);
+            }
+        } else if (action == 9) { // removes a word at given index
             int index = -1;
             scanf("%d",&index);
             StrList_removeAt(list,index);
-        } else if (action == 10) {
+        } else if (action == 10) { // reverse the list
             StrList_reverse(list);
-        } else if (action == 11) {
+        } else if (action == 11) { // clear list
             while (StrList_size(list)) {
                 StrList_removeAt(list,0);
             }
-        } else if (action == 12) {
+        } else if (action == 12) { // sort
             StrList_sort(list);
-        } else if (action == 13) {
-            printf("%d", StrList_isSorted(list)); // TODO what to print
+        } else if (action == 13) { // is sorted
+            if (StrList_isSorted(list)) printf("true\n");
+            else printf("false\n");
         }
         scanf("%d",&action);
     }
     StrList_free(list);
+    free(line);
 
     return 0;
 }
+
+void splitWords(char *str, StrList *list) {
+    char *token = strtok(str, " ");
+    while (token != NULL) {
+        //printf("%s\n", token);
+        int last = strlen(token)-1;
+        if (token[last] == 10) { token[last] = '\0'; }
+        StrList_insertLast(list, token);
+        token = strtok(NULL, " ");
+    }
+}
+void cleanInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        // Discard characters until newline or end-of-file
+    }
+}
+char* getWord(char *str) {
+    char *token = strtok(str, " ");
+    unsigned last = strlen(token)-1;
+    if (token[last] == 10) { token[last] = '\0'; }
+    return token;
+}
+
