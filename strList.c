@@ -54,7 +54,7 @@ void Node_free(Node *node) {
  */
 StrList *StrList_alloc() {
     StrList *p = (StrList *) malloc(sizeof(StrList));
-    if (p == NULL) return NULL; //should check what they want us to do in this case
+    if (p == NULL) return NULL;
     p->_head = NULL;
     p->_size = 0;
     return p;
@@ -81,6 +81,7 @@ void StrList_free(StrList *StrList) {
  * Returns the number of elements in the StrList.
  */
 size_t StrList_size(const StrList *StrList) {
+    if (StrList == NULL) { return 0; }
     return StrList->_size;
 }
 
@@ -90,7 +91,7 @@ size_t StrList_size(const StrList *StrList) {
 void StrList_insertLast(StrList *StrList,
                         const char *data) {
     Node *newNode = Node_alloc(data, NULL);
-    if (newNode == NULL) { printf("Node alloc failed"); }
+    if (newNode == NULL) { printf("Node alloc failed"); return; }
     Node *p = StrList->_head;
     if (p == NULL) {
         StrList->_head = newNode;
@@ -130,6 +131,7 @@ void StrList_insertAt(StrList *StrList,
  * Returns the StrList first data.
  */
 char *StrList_firstData(const StrList *StrList) {
+    if (StrList->_head == NULL) { return NULL; }
     return StrList->_head->_data;
 }
 
@@ -139,7 +141,7 @@ char *StrList_firstData(const StrList *StrList) {
 void StrList_print(const StrList *StrList) {
     if (StrList->_head == NULL) { return; }
     Node *p = StrList->_head;
-    printf("%s", p->_data);    //should check how to print
+    printf("%s", p->_data);
     p = p->_next;
     while (p) {
         printf(" %s", p->_data);
@@ -265,9 +267,11 @@ StrList *StrList_clone(const StrList *StrList) {
     Node *p = StrList->_head;
     while (p) {
         char *data = (char *) malloc(strlen(p->_data) + 1);
+        if (data == NULL) { return NULL; }
         strcpy(data, p->_data);
         StrList_insertLast(newList, data);
         p = p->_next;
+        free(data);
     }
     return newList;
 }
@@ -320,7 +324,7 @@ void StrList_sort(StrList *StrList) {
  */
 int StrList_isSorted(StrList *StrList) {
     Node *p = StrList->_head;
-    if (p == NULL) { return TRUE; } // TODO
+    if (p == NULL) { return TRUE; }
     while (p->_next) {
         if (strcmp(p->_data, p->_next->_data) > 0) {
             return FALSE;
