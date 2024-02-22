@@ -139,7 +139,7 @@ char *StrList_firstData(const StrList *StrList) {
  * Prints the StrList to the standard output.
  */
 void StrList_print(const StrList *StrList) {
-    if (StrList->_head == NULL) { return; }
+    if (StrList->_head == NULL) { printf("\n"); return; }
     Node *p = StrList->_head;
     printf("%s", p->_data);
     p = p->_next;
