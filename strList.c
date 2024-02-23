@@ -116,7 +116,11 @@ void StrList_insertAt(StrList *StrList,
         Node *newNode = Node_alloc(data, StrList->_head);
         StrList->_head = newNode;
         StrList->_size++;
-    } else {
+    } 
+    else if (index == StrList->_size) {
+        StrList_insertLast(StrList, data);
+    }
+    else {
         Node *p = StrList->_head;
         for (int i = 0; i < index - 1; i++) {
             p = p->_next;

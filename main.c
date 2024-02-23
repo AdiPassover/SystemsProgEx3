@@ -2,7 +2,7 @@
 #include <string.h>
 #include "strList.h"
 
-void splitWords(char *str, StrList *list);
+void splitWords(char *str, StrList *list, size_t wordsNumber);
 void cleanInputBuffer();
 char* getWord(char *str);
 
@@ -13,21 +13,28 @@ int main() {
     scanf("%d",&action);
     char *line = NULL;
     size_t len = 0;
-    size_t wordsNumber = 0;
-    size_t lineSize = 0;
+    int wordsNumber = 0;
+    int lineSize = 0;
     StrList *list = StrList_alloc();
 
     while (action != 0) {
         if (action == 1) { // insert multiple words at end
-            scanf("%zd",&wordsNumber);
+            while(scanf("%d",&wordsNumber)!=1||wordsNumber<=0)
+            {
+                cleanInputBuffer();
+            }
             cleanInputBuffer();
             lineSize = getline(&line, &len, stdin);
             if (lineSize != -1) {
-                splitWords(line, list);
+                splitWords(line, list, wordsNumber);
             }
         } else if (action == 2) { // insert single word at given index
             int index = -1;
-            scanf("%d",&index);
+            while(scanf("%d",&index)!=1||index<0||index>StrList_size(list))
+            {
+                index = -1;
+                cleanInputBuffer();
+            }
             cleanInputBuffer();
             lineSize = getline(&line, &len, stdin);
             if (lineSize != -1) {
@@ -40,7 +47,11 @@ int main() {
             printf("%zu\n", StrList_size(list));
         } else if (action == 5) { // print word at given index
             int index = -1;
-            scanf("%d",&index);
+            while(scanf("%d",&index)!=1||index<0||index>=StrList_size(list))
+            {
+                index = -1;
+                cleanInputBuffer();
+            }
             StrList_printAt(list,index);
         } else if (action == 6) { // print total character count
             printf("%d\n", StrList_printLen(list));
@@ -60,7 +71,11 @@ int main() {
             }
         } else if (action == 9) { // removes a word at given index
             int index = -1;
-            scanf("%d",&index);
+            while(scanf("%d",&index)!=1||index<0||index>=StrList_size(list))
+            {
+                index = -1;
+                cleanInputBuffer();
+            }
             StrList_removeAt(list,index);
         } else if (action == 10) { // reverse the list
             StrList_reverse(list);
@@ -74,7 +89,11 @@ int main() {
             if (StrList_isSorted(list)) printf("true\n");
             else printf("false\n");
         }
-        scanf("%d",&action);
+       while ((scanf("%d",&action)!=1) )
+       {
+              cleanInputBuffer();
+       }
+       
     }
     StrList_free(list);
     free(line);
@@ -82,9 +101,9 @@ int main() {
     return 0;
 }
 
-void splitWords(char *str, StrList *list) {
+void splitWords(char *str, StrList *list, size_t wordsNumber) {
     char *token = strtok(str, " ");
-    while (token != NULL) {
+    while (token != NULL&&wordsNumber--) {
         //printf("%s\n", token);
         int last = strlen(token)-1;
         if (token[last] == 10) { token[last] = '\0'; }
